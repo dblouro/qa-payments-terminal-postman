@@ -1,0 +1,1 @@
+# qa-payments-terminal-postman
