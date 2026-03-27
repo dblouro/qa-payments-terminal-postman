@@ -91,6 +91,66 @@
         }
       },
       "response": []
+    },
+    {
+      "name": "Start Payment (Declined)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "// Verificar status HTTP 200 (mock devolve 200 sempre)\r",
+              "pm.test(\"Status code is 200\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "// Verificar estrutura de resposta (simula um backend de pagamentos)\r",
+              "pm.test(\"Response has JSON structure similar to payment API\", function () {\r",
+              "    var responseBody = pm.response.json();\r",
+              "    pm.expect(responseBody).to.have.property(\"json\");\r",
+              "    pm.expect(responseBody.json).to.have.property(\"amount\");\r",
+              "    pm.expect(responseBody.json).to.have.property(\"currency\");\r",
+              "});\r",
+              "\r",
+              "// Verificar que o amount alto é enviado (inconsistência com saldo)\r",
+              "pm.test(\"Amount sent is very high (9999.00)\", function () {\r",
+              "    var jsonData = pm.request.json();\r",
+              "    pm.expect(jsonData.amount).to.eql(9990.00); // errado de propósito\r",
+              "});\r",
+              "\r",
+              "// validar que o request tem dados “inválidos/suspeitos” e que a resposta mantem estrutura semelhante a um backend de pagamentos, mesmo que continue a ser 200"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"amount\": 9999.00,\r\n  \"currency\": \"EUR\",\r\n  \"cardNumber\": \"1234123412341234\",\r\n  \"expiryDate\": \"01/20\",\r\n  \"cvv\": \"000\",\r\n  \"terminalId\": \"T001\",\r\n  \"userId\": \"U12345\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://httpbin.org/post",
+          "protocol": "https",
+          "host": [
+            "httpbin",
+            "org"
+          ],
+          "path": [
+            "post"
+          ]
+        }
+      },
+      "response": []
     }
   ]
 }
