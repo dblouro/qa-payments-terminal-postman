@@ -151,6 +151,63 @@
         }
       },
       "response": []
+    },
+    {
+      "name": "POST - Cancel Payment",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "// Verificar status HTTP 200\r",
+              "pm.test(\"Status code is 200\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "// Verificar que o backend ecoou um JSON com transactionId\r",
+              "pm.test(\"Response contains transactionId in JSON\", function () {\r",
+              "    var responseBody = pm.response.json();\r",
+              "    pm.expect(responseBody).to.have.property(\"json\");\r",
+              "    pm.expect(responseBody.json).to.have.property(\"transactionId\");\r",
+              "});\r",
+              "\r",
+              "// Verificar que o motivo de cancelamento foi enviado corretamente\r",
+              "pm.test(\"Cancel reason is present and correct\", function () {\r",
+              "    var reqBody = pm.request.json();\r",
+              "    pm.expect(reqBody.reason).to.eql(\"Customer requested cancel\");\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"transactionId\": \"TX123456789\",\r\n  \"reason\": \"Customer requested cancel\",\r\n  \"terminalId\": \"T001\",\r\n  \"userId\": \"U12345\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://httpbin.org/post",
+          "protocol": "https",
+          "host": [
+            "httpbin",
+            "org"
+          ],
+          "path": [
+            "post"
+          ]
+        }
+      },
+      "response": []
     }
   ]
 }
