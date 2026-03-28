@@ -1,0 +1,49 @@
+## Caso 4 – Consulta de estado da transação
+
+**Objetivo:**  
+Validar a consulta do estado de uma transação existente através do 'transactionId'.
+
+**Pré‑condições:**  
+- Existe uma transação previamente criada com 'transactionId' conhecido.  
+- Terminal online e com acesso ao backend.
+
+**Passos:**  
+1. O terminal envia uma requisição 'GET/payments/status?id=TX123456789'.  
+2. O backend recebe o identificador da transação.  
+3. O backend devolve o estado atual da transação.
+
+**Resultados esperados:**  
+- Código HTTP: '200'.  
+- Resposta contém:  
+  - 'transactionId' correspondente ao pedido,  
+  - 'status' atual da transação,  
+  - 'amount' e 'currency' consistentes com a operação original.  
+- O terminal consegue apresentar o estado correto ao operador/utilizador.  
+- A consulta não altera o estado da transação.
+
+**Tipo de teste:** Funcional/API (Postman).
+
+
+## Caso 5 – Pagamento com timeout/erro de rede
+
+**Objetivo:**  
+Validar o comportamento do sistema quando ocorre um timeout ou falha de rede durante o processamento do pagamento.
+
+**Pré‑condições:**  
+- Terminal online no momento do envio do pedido.  
+- Backend indisponível, lento ou com ligação interrompida.  
+- Pedido de pagamento preparado com dados válidos.
+
+**Passos:**  
+1. O terminal envia uma requisição 'POST/payments' para iniciar o pagamento.  
+2. A ligação ao backend é interrompida ou a resposta demora demasiado tempo.  
+3. O terminal aguarda até atingir o timeout configurado.  
+4. O terminal apresenta uma mensagem de erro ao operador/utilizador.
+
+**Resultados esperados:**  
+- O sistema identifica corretamente a falha de comunicação ou timeout.  
+- Não é assumido sucesso da transação sem confirmação explícita do backend.  
+- O utilizador recebe uma mensagem clara de erro de rede/timeout.  
+- A transação não é marcada como aprovada sem resposta válida do backend.
+
+**Tipo de teste:** Funcional/API (Postman) – cenário negativo.

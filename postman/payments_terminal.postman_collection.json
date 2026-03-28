@@ -264,6 +264,82 @@
         }
       },
       "response": []
+    },
+    {
+      "name": "Start Payment (Invalid Fields)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "// Verificar status HTTP 200 (no mock, continua a ser 200; num backend real podia ser 400)\r",
+              "pm.test(\"Status code is 200\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "// Verificar que o backend ecoa o JSON enviado (mock)\r",
+              "pm.test(\"Response has JSON body similar to payment request\", function () {\r",
+              "    var responseBody = pm.response.json();\r",
+              "    pm.expect(responseBody).to.have.property(\"json\");\r",
+              "    pm.expect(responseBody.json).to.have.property(\"amount\");\r",
+              "    pm.expect(responseBody.json).to.have.property(\"currency\");\r",
+              "});\r",
+              "\r",
+              "// Verificar que o amount negativo foi enviado (dado inválido)\r",
+              "pm.test(\"Amount sent is negative (-10.00)\", function () {\r",
+              "    var jsonData = pm.request.json();\r",
+              "    pm.expect(jsonData.amount).to.eql(-10.00);\r",
+              "});\r",
+              "\r",
+              "// Verificar currency inválida\r",
+              "pm.test(\"Currency sent is invalid ('XYZ')\", function () {\r",
+              "    var jsonData = pm.request.json();\r",
+              "    pm.expect(jsonData.currency).to.eql(\"XYZ\");\r",
+              "});\r",
+              "\r",
+              "// Verificar cardNumber vazio\r",
+              "pm.test(\"CardNumber is empty in request\", function () {\r",
+              "    var jsonData = pm.request.json();\r",
+              "    pm.expect(jsonData.cardNumber).to.be.a(\"string\").and.to.eq(\"\");\r",
+              "});\r",
+              "\r",
+              "// Verificar userId vazio\r",
+              "pm.test(\"UserId is empty in request\", function () {\r",
+              "    var jsonData = pm.request.json();\r",
+              "    pm.expect(jsonData.userId).to.be.a(\"string\").and.to.eq(\"\");\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"amount\": -10.00,\r\n  \"currency\": \"XYZ\",\r\n  \"cardNumber\": \"\",\r\n  \"expiryDate\": \"XX/XX\",\r\n  \"cvv\": \"1\",\r\n  \"terminalId\": \"T001\",\r\n  \"userId\": \"\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://httpbin.org/post",
+          "protocol": "https",
+          "host": [
+            "httpbin",
+            "org"
+          ],
+          "path": [
+            "post"
+          ]
+        }
+      },
+      "response": []
     }
   ]
 }
