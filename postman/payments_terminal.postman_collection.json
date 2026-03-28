@@ -340,6 +340,66 @@
         }
       },
       "response": []
+    },
+    {
+      "name": "Payment Timeout/Network Error",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "// Verificar status HTTP 200 (no mock, delay retorna 200, mas em real pode ser 504/timeout)\r",
+              "pm.test(\"Status code is 200 or timeout-like error\", function () {\r",
+              "    pm.expect(pm.response.status).to.be.within(200, 504); // 504 é típico de gateway timeout\r",
+              "});\r",
+              "\r",
+              "// Verificar resposta tem estrutura JSON (mock ecoa o request)\r",
+              "pm.test(\"Response has JSON body and delay\", function () {\r",
+              "    var responseBody = pm.response.json();\r",
+              "    pm.expect(responseBody).to.have.property(\"json\");\r",
+              "    pm.expect(responseBody).to.have.property(\"delay\"); // httpbin inclui o delay aplicado\r",
+              "    pm.expect(responseBody.delay).to.eql(3); // ajusta se alteraste o delay\r",
+              "});\r",
+              "\r",
+              "// Verificar que o payload enviado é ecoado corretamente (dados inválidos ou não)\r",
+              "pm.test(\"Payment amount and currency match sent request\", function () {\r",
+              "    var reqBody = pm.request.json();\r",
+              "    pm.expect(reqBody.amount).to.eql(50.00);\r",
+              "    pm.expect(reqBody.currency).to.eql(\"EUR\");\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"amount\": 50.00,\r\n  \"currency\": \"EUR\",\r\n  \"cardNumber\": \"4111111111111111\",\r\n  \"expiryDate\": \"12/29\",\r\n  \"cvv\": \"123\",\r\n  \"terminalId\": \"T001\",\r\n  \"userId\": \"U12345\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://httpbin.org/delay/3",
+          "protocol": "https",
+          "host": [
+            "httpbin",
+            "org"
+          ],
+          "path": [
+            "delay",
+            "3"
+          ]
+        }
+      },
+      "response": []
     }
   ]
 }

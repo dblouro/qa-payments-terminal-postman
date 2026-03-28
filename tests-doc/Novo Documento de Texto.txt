@@ -47,3 +47,26 @@ Validar o comportamento do sistema quando ocorre um timeout ou falha de rede dur
 - A transação não é marcada como aprovada sem resposta válida do backend.
 
 **Tipo de teste:** Funcional/API (Postman) – cenário negativo.
+
+
+## Caso 6 – Pagamento com campos inválidos
+
+**Objetivo:**  
+Validar o tratamento de dados de pagamento inválidos ou mal formatados (ex.: campos obrigatórios vazios, valores inválidos).
+
+**Pré‑condições:**  
+- Terminal online.  
+- Operador cliente insere dados de pagamento com campos inválidos (ex.: montante negativo, 'currency' errada, 'userId' vazio, 'cardNumber' vazio).
+
+**Passos:**  
+1. O terminal envia 'POST/payments' com dados inválidos.  
+2. O backend valida o conteúdo do pedido.  
+3. O backend devolve erro de validação (ex.: campos inválidos ou obrigatórios em falta).
+
+**Resultados esperados:**  
+- Código HTTP: '200' (mock) ou '400' em sistema real.  
+- A resposta contém mensagem de erro indicando campos inválidos.  
+- O terminal não permite prosseguir com o fluxo de pagamento até os dados estarem corretos.  
+- Nenhum valor é debitado quando os dados são inválidos.
+
+**Tipo de teste:** Funcional/API (Postman) – validação de dados.
