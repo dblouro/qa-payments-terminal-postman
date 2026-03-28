@@ -27,7 +27,7 @@
       "response": []
     },
     {
-      "name": "Start Payment",
+      "name": "Start Payment (Confirmed)",
       "event": [
         {
           "listen": "test",
@@ -153,7 +153,7 @@
       "response": []
     },
     {
-      "name": "POST - Cancel Payment",
+      "name": "Cancel Payment",
       "event": [
         {
           "listen": "test",
@@ -204,6 +204,62 @@
           ],
           "path": [
             "post"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Check Payment Status",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "// Verificar status HTTP 200\r",
+              "pm.test(\"Status code is 200\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "// Verificar que o parâmetro id foi enviado na query\r",
+              "pm.test(\"URL query parameter 'id' is present\", function () {\r",
+              "    pm.expect(pm.request.url.query).to.have.property(\"id\");\r",
+              "    pm.expect(pm.request.url.query.id).to.have.property(\"value\", \"TX123456789\");\r",
+              "});\r",
+              "\r",
+              "// Verificar que a resposta ecoa o parâmetro (mock)\r",
+              "pm.test(\"Response contains the id in query parameters\", function () {\r",
+              "    var responseBody = pm.response.json();\r",
+              "    pm.expect(responseBody).to.have.property(\"args\");\r",
+              "    pm.expect(responseBody.args).to.have.property(\"id\");\r",
+              "    pm.expect(responseBody.args.id).to.eql(\"TX123456789\");\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://httpbin.org/get?id=TX123456789",
+          "protocol": "https",
+          "host": [
+            "httpbin",
+            "org"
+          ],
+          "path": [
+            "get"
+          ],
+          "query": [
+            {
+              "key": "id",
+              "value": "TX123456789",
+              "type": "text"
+            }
           ]
         }
       },
